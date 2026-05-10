@@ -1,6 +1,6 @@
 use crate::errors::Error;
 use crate::types::{
-    CreatorStats, EscrowBalances, EscrowInfo, EscrowMeta, OracleConfig, PlatformStats, Quest, 
+    BadgeType, CreatorStats, EscrowBalances, EscrowInfo, EscrowMeta, OracleConfig, PlatformStats, Quest, 
     QuestMetadata, QuestMetadataCore, QuestMetadataExtended, QuestStatus, Role, Submission, 
     SubmissionStatus, UserBadges, UserCore, Commitment
 };

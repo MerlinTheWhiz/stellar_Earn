@@ -5,7 +5,7 @@ export class InitialSchema1769471764117 implements MigrationInterface {
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      `CREATE TABLE "User" (
+      `CREATE TABLE "users" (
         "id" UUID NOT NULL DEFAULT gen_random_uuid(),
         "stellarAddress" TEXT NOT NULL,
         "username" TEXT,
@@ -20,11 +20,11 @@ export class InitialSchema1769471764117 implements MigrationInterface {
     );
 
     await queryRunner.query(
-      `CREATE UNIQUE INDEX "IDX_USER_STELLAR_ADDRESS" ON "User" ("stellarAddress")`,
+      `CREATE UNIQUE INDEX "IDX_USER_STELLAR_ADDRESS" ON "users" ("stellarAddress")`,
     );
 
     await queryRunner.query(
-      `CREATE TABLE "Quest" (
+      `CREATE TABLE "quests" (
         "id" UUID NOT NULL DEFAULT gen_random_uuid(),
         "title" TEXT NOT NULL,
         "description" TEXT NOT NULL,
@@ -43,7 +43,7 @@ export class InitialSchema1769471764117 implements MigrationInterface {
     );
 
     await queryRunner.query(
-      `CREATE TABLE "Submission" (
+      `CREATE TABLE "submissions" (
         "id" UUID NOT NULL DEFAULT gen_random_uuid(),
         "questId" TEXT NOT NULL,
         "userId" TEXT NOT NULL,
@@ -62,19 +62,19 @@ export class InitialSchema1769471764117 implements MigrationInterface {
     );
 
     await queryRunner.query(
-      `CREATE INDEX "IDX_SUBMISSION_QUEST_ID" ON "Submission" ("questId")`,
+      `CREATE INDEX "IDX_SUBMISSION_QUEST_ID" ON "submissions" ("questId")`,
     );
 
     await queryRunner.query(
-      `CREATE INDEX "IDX_SUBMISSION_USER_ID" ON "Submission" ("userId")`,
+      `CREATE INDEX "IDX_SUBMISSION_USER_ID" ON "submissions" ("userId")`,
     );
 
     await queryRunner.query(
-      `CREATE INDEX "IDX_SUBMISSION_STATUS" ON "Submission" ("status")`,
+      `CREATE INDEX "IDX_SUBMISSION_STATUS" ON "submissions" ("status")`,
     );
 
     await queryRunner.query(
-      `CREATE TABLE "Notification" (
+      `CREATE TABLE "notifications" (
         "id" UUID NOT NULL DEFAULT gen_random_uuid(),
         "userId" TEXT NOT NULL,
         "type" TEXT NOT NULL,
@@ -89,15 +89,15 @@ export class InitialSchema1769471764117 implements MigrationInterface {
     );
 
     await queryRunner.query(
-      `CREATE INDEX "IDX_NOTIFICATION_USER_ID" ON "Notification" ("userId")`,
+      `CREATE INDEX "IDX_NOTIFICATION_USER_ID" ON "notifications" ("userId")`,
     );
 
     await queryRunner.query(
-      `CREATE INDEX "IDX_NOTIFICATION_READ" ON "Notification" ("read")`,
+      `CREATE INDEX "IDX_NOTIFICATION_READ" ON "notifications" ("read")`,
     );
 
     await queryRunner.query(
-      `CREATE TABLE "Payout" (
+      `CREATE TABLE "payouts" (
         "id" UUID NOT NULL DEFAULT gen_random_uuid(),
         "userId" TEXT NOT NULL,
         "amount" INTEGER NOT NULL,
@@ -110,7 +110,7 @@ export class InitialSchema1769471764117 implements MigrationInterface {
     );
 
     await queryRunner.query(
-      `CREATE TABLE "RefreshToken" (
+      `CREATE TABLE "refresh_tokens" (
         "id" UUID NOT NULL DEFAULT gen_random_uuid(),
         "token" TEXT NOT NULL,
         "stellarAddress" TEXT NOT NULL,
@@ -122,15 +122,15 @@ export class InitialSchema1769471764117 implements MigrationInterface {
     );
 
     await queryRunner.query(
-      `CREATE INDEX "IDX_REFRESH_TOKEN_TOKEN" ON "RefreshToken" ("token")`,
+      `CREATE INDEX "IDX_REFRESH_TOKEN_TOKEN" ON "refresh_tokens" ("token")`,
     );
 
     await queryRunner.query(
-      `CREATE INDEX "IDX_REFRESH_TOKEN_STELLAR_ADDRESS" ON "RefreshToken" ("stellarAddress")`,
+      `CREATE INDEX "IDX_REFRESH_TOKEN_STELLAR_ADDRESS" ON "refresh_tokens" ("stellarAddress")`,
     );
 
     await queryRunner.query(
-      `CREATE TABLE "AnalyticsSnapshot" (
+      `CREATE TABLE "analytics_snapshots" (
         "id" UUID NOT NULL DEFAULT gen_random_uuid(),
         "date" DATE NOT NULL,
         "type" TEXT NOT NULL,
@@ -143,15 +143,15 @@ export class InitialSchema1769471764117 implements MigrationInterface {
     );
 
     await queryRunner.query(
-      `CREATE INDEX "IDX_ANALYTICS_SNAPSHOT_DATE" ON "AnalyticsSnapshot" ("date")`,
+      `CREATE INDEX "IDX_ANALYTICS_SNAPSHOT_DATE" ON "analytics_snapshots" ("date")`,
     );
 
     await queryRunner.query(
-      `CREATE INDEX "IDX_ANALYTICS_SNAPSHOT_TYPE" ON "AnalyticsSnapshot" ("type")`,
+      `CREATE INDEX "IDX_ANALYTICS_SNAPSHOT_TYPE" ON "analytics_snapshots" ("type")`,
     );
 
     await queryRunner.query(
-      `CREATE INDEX "IDX_ANALYTICS_SNAPSHOT_REFERENCE_ID" ON "AnalyticsSnapshot" ("referenceId")`,
+      `CREATE INDEX "IDX_ANALYTICS_SNAPSHOT_REFERENCE_ID" ON "analytics_snapshots" ("referenceId")`,
     );
   }
 

@@ -6,50 +6,50 @@ export class AddSoftDeletes1777056872715 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
     // Add deletedAt column to User table
     await queryRunner.query(
-      `ALTER TABLE "User" ADD COLUMN "deletedAt" TIMESTAMP WITH TIME ZONE`,
+      `ALTER TABLE "users" ADD COLUMN "deletedAt" TIMESTAMP WITH TIME ZONE`,
     );
     await queryRunner.query(
-      `CREATE INDEX "IDX_USER_DELETED_AT" ON "User" ("deletedAt")`,
+      `CREATE INDEX "IDX_USER_DELETED_AT" ON "users" ("deletedAt")`,
     );
 
     // Add deletedAt column to Quest table
     await queryRunner.query(
-      `ALTER TABLE "Quest" ADD COLUMN "deletedAt" TIMESTAMP WITH TIME ZONE`,
+      `ALTER TABLE "quests" ADD COLUMN "deletedAt" TIMESTAMP WITH TIME ZONE`,
     );
     await queryRunner.query(
-      `CREATE INDEX "IDX_QUEST_DELETED_AT" ON "Quest" ("deletedAt")`,
+      `CREATE INDEX "IDX_QUEST_DELETED_AT" ON "quests" ("deletedAt")`,
     );
 
     // Add deletedAt column to Submission table
     await queryRunner.query(
-      `ALTER TABLE "Submission" ADD COLUMN "deletedAt" TIMESTAMP WITH TIME ZONE`,
+      `ALTER TABLE "submissions" ADD COLUMN "deletedAt" TIMESTAMP WITH TIME ZONE`,
     );
     await queryRunner.query(
-      `CREATE INDEX "IDX_SUBMISSION_DELETED_AT" ON "Submission" ("deletedAt")`,
+      `CREATE INDEX "IDX_SUBMISSION_DELETED_AT" ON "submissions" ("deletedAt")`,
     );
 
     // Add deletedAt column to Notification table
     await queryRunner.query(
-      `ALTER TABLE "Notification" ADD COLUMN "deletedAt" TIMESTAMP WITH TIME ZONE`,
+      `ALTER TABLE "notifications" ADD COLUMN "deletedAt" TIMESTAMP WITH TIME ZONE`,
     );
     await queryRunner.query(
-      `CREATE INDEX "IDX_NOTIFICATION_DELETED_AT" ON "Notification" ("deletedAt")`,
+      `CREATE INDEX "IDX_NOTIFICATION_DELETED_AT" ON "notifications" ("deletedAt")`,
     );
 
     // Add deletedAt column to Payout table
     await queryRunner.query(
-      `ALTER TABLE "Payout" ADD COLUMN "deletedAt" TIMESTAMP WITH TIME ZONE`,
+      `ALTER TABLE "payouts" ADD COLUMN "deletedAt" TIMESTAMP WITH TIME ZONE`,
     );
     await queryRunner.query(
-      `CREATE INDEX "IDX_PAYOUT_DELETED_AT" ON "Payout" ("deletedAt")`,
+      `CREATE INDEX "IDX_PAYOUT_DELETED_AT" ON "payouts" ("deletedAt")`,
     );
 
     // Add deletedAt column to RefreshToken table
     await queryRunner.query(
-      `ALTER TABLE "RefreshToken" ADD COLUMN "deletedAt" TIMESTAMP WITH TIME ZONE`,
+      `ALTER TABLE "refresh_tokens" ADD COLUMN "deletedAt" TIMESTAMP WITH TIME ZONE`,
     );
     await queryRunner.query(
-      `CREATE INDEX "IDX_REFRESH_TOKEN_DELETED_AT" ON "RefreshToken" ("deletedAt")`,
+      `CREATE INDEX "IDX_REFRESH_TOKEN_DELETED_AT" ON "refresh_tokens" ("deletedAt")`,
     );
   }
 

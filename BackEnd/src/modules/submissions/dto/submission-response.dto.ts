@@ -151,6 +151,7 @@ export class GetSubmissionResponseDto {
   @ApiProperty({
     description: 'Submission data',
     type: 'object',
+    additionalProperties: true,
   })
   data: {
     submission: any;
@@ -167,6 +168,7 @@ export class QuestSubmissionsResponseDto {
   @ApiProperty({
     description: 'Submissions data',
     type: 'object',
+    additionalProperties: true,
   })
   data: {
     submissions: any[];

@@ -138,6 +138,12 @@ pub enum Error {
     IndexOutOfBounds = 112,
     CommitmentNotFound = 113,
     InvalidCommitment = 114,
+
+    // Badge Errors
+    BadgeTypeNotFound = 142,
+
+    // Payout Errors
+    InvalidClaimAmount = 143,
 }
 
 

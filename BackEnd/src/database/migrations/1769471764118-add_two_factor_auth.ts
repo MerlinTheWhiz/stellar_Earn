@@ -60,14 +60,7 @@ export class AddTwoFactorAuth1769471764118 implements MigrationInterface {
       true,
     );
 
-    await queryRunner.createIndex(
-      'two_factor_auth',
-      new Index({
-        name: 'IDX_two_factor_auth_stellarAddress',
-        columnNames: ['stellarAddress'],
-        isUnique: true,
-      }),
-    );
+    await queryRunner.query(`CREATE UNIQUE INDEX "IDX_two_factor_auth_stellarAddress" ON "two_factor_auth" ("stellarAddress")`);
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {

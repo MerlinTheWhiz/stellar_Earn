@@ -113,6 +113,15 @@ export class AppLoggerService implements LoggerService {
     this.logger.http(message, this.formatMeta('HTTP', meta));
   }
 
+  info(message: string, context?: string, meta?: Record<string, any>): void;
+  info(message: string, ...optionalParams: any[]): void;
+  info(message: string, contextOrParams?: string | any, meta?: Record<string, any>): void {
+    const context = typeof contextOrParams === 'string' ? contextOrParams : undefined;
+    const additionalMeta = typeof contextOrParams === 'object' ? contextOrParams : meta;
+    
+    this.logger.info(message, this.formatMeta(context, additionalMeta));
+  }
+
   performance(metric: PerformanceMetric): void {
     this.performanceLogger.info('Performance metric', {
       ...this.formatMeta('Performance'),

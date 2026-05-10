@@ -227,7 +227,7 @@ pub fn validate_claim_amount(
 
     let remaining = quest.reward_amount - submission.claimed_amount;
     if amount > remaining {
-        return Err(Error::InvalidClaimAmount);
+        return Err(Error::InvalidRewardAmount);
     }
 
     Ok(remaining)

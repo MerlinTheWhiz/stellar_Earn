@@ -162,6 +162,7 @@ export class UserMetrics {
   @ApiProperty({
     description: 'Social links',
     type: 'object',
+    additionalProperties: true,
     example: { twitter: '@user', github: 'user' },
     nullable: true,
   })

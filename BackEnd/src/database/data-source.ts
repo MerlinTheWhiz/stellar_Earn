@@ -4,6 +4,18 @@ import * as dotenv from 'dotenv';
 import * as path from 'path';
 import { AppLoggerService } from '../common/logger/logger.service';
 
+import { RefreshToken } from '../modules/auth/entities/refresh-token.entity';
+import { TwoFactorAuth } from '../modules/auth/entities/two-factor.entity';
+
+import { Quest } from '../modules/quests/entities/quest.entity';
+import { Submission } from '../modules/submissions/entities/submission.entity';
+import { User } from '../modules/users/entities/user.entity';
+import { Notification } from '../modules/notifications/entities/notification.entity';
+import { Payout } from '../modules/payouts/entities/payout.entity';
+import { ModerationItem } from '../modules/moderation/entities/moderation-item.entity';
+import { ModerationAppeal } from '../modules/moderation/entities/moderation-appeal.entity';
+import { DataExport } from '../modules/users/entities/data-export.entity';
+
 dotenv.config({ path: path.resolve(__dirname, '../../.env') });
 
 class TypeORMQueryLogger implements Logger {
@@ -79,7 +91,12 @@ export const dataSourceOptions: DataSourceOptions = {
       : false,
 
   entities: [
-    path.join(__dirname, '..', '**', 'entities', '*.entity.{ts,js}'),
+    RefreshToken,
+    Quest,
+    User,
+    Submission,
+    Notification,
+    Payout,
   ],
 
   migrations: [

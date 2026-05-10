@@ -8,7 +8,30 @@
  */
 
 import { useEffect, useState } from 'react';
-import { validateEnv } from '@/lib/config/env';
+
+// Client-side validation for NEXT_PUBLIC_* variables.
+// Next.js only inlines these into the browser bundle when you use **static**
+// property access (e.g. process.env.NEXT_PUBLIC_API_BASE_URL). Dynamic
+// access like process.env[name] is not replaced and is always undefined on the client.
+function validateClientEnv() {
+  const errors: { variable: string; description: string; example: string }[] =
+    [];
+
+  const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
+  if (!apiBaseUrl) {
+    errors.push({
+      variable: 'NEXT_PUBLIC_API_BASE_URL',
+      description: 'Backend API base URL',
+      example: 'http://localhost:3001',
+    });
+  }
+
+  return {
+    valid: errors.length === 0,
+    errors,
+    warnings: [],
+  };
+}
 
 interface EnvValidatorProps {
   children: React.ReactNode;
@@ -20,7 +43,7 @@ export function EnvValidator({ children }: EnvValidatorProps) {
 
   useEffect(() => {
     try {
-      const result = validateEnv();
+      const result = validateClientEnv();
 
       if (!result.valid) {
         const errorMessages = result.errors

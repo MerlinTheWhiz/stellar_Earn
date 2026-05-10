@@ -1,4 +1,4 @@
-import { applyDecorators, SetMetadata } from '@nestjs/common';
+import { applyDecorators, SetMetadata, Version } from '@nestjs/common';
 
 export interface ApiVersionOptions {
   deprecated?: boolean;

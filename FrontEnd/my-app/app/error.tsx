@@ -17,9 +17,7 @@ export default function GlobalError({
   }, [error]);
 
   return (
-    <html>
-      <body>
-        <div className="min-h-screen bg-zinc-900 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-zinc-900 flex items-center justify-center p-4">
           <div className="max-w-2xl w-full text-center">
             {/* Error Illustration */}
             <div className="mb-8">
@@ -146,7 +144,5 @@ export default function GlobalError({
             </div>
           </div>
         </div>
-      </body>
-    </html>
   );
 }

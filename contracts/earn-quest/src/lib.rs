@@ -21,6 +21,7 @@ pub mod validation;
 mod test_token;
 
 use crate::errors::Error;
+use crate::storage::{get_badge_type, list_badge_types};
 
 pub use crate::types::{
     AggregatedPrice, Badge, BadgeType, BatchApprovalInput, BatchQuestInput, CreatorStats, Dispute,
@@ -59,7 +60,7 @@ impl EarnQuestContract {
         storage::grant_role(&env, &admin, &Role::OracleAdmin);
         storage::grant_role(&env, &admin, &Role::StatsAdmin);
         storage::grant_role(&env, &admin, &Role::BadgeAdmin);
-        reputation::seed_default_badge_types(&env);
+        reputation::seed_default_badge_types(&env, &admin);
         storage::mark_initialized(&env);
     }
 
@@ -568,7 +569,7 @@ impl EarnQuestContract {
         badge_type: BadgeType,
     ) -> Result<(), Error> {
         security::require_not_paused(&env)?;
-        reputation::register_badge_type(&env, &caller, badge_type)
+        reputation::register_badge_type(&env, &caller, &badge_type)
     }
 
     /// Update an existing badge type definition.  Admin only.
@@ -578,24 +579,24 @@ impl EarnQuestContract {
         badge_type: BadgeType,
     ) -> Result<(), Error> {
         security::require_not_paused(&env)?;
-        reputation::update_badge_type(&env, &caller, badge_type)
+        reputation::update_badge_type(&env, &caller, &badge_type)
     }
 
     /// Remove a badge type from the registry.  Existing user grants are not
     /// retroactively revoked.  Admin only.
     pub fn remove_badge_type(env: Env, caller: Address, id: Symbol) -> Result<(), Error> {
         security::require_not_paused(&env)?;
-        reputation::remove_badge_type(&env, &caller, id)
+        reputation::remove_badge_type(&env, &caller, &id)
     }
 
     /// Fetch a single badge type by id.
     pub fn get_badge_type(env: Env, id: Symbol) -> Result<BadgeType, Error> {
-        reputation::get_badge_type(&env, &id)
+        get_badge_type(&env, &id)
     }
 
     /// List all registered badge types.
     pub fn list_badge_types(env: Env) -> Vec<BadgeType> {
-        reputation::list_badge_types(&env)
+        list_badge_types(&env)
     }
 
     // ── Dispute Resolution ──

@@ -220,7 +220,14 @@ pub fn level_up(env: &Env, user: Address, new_level: u32) {
 /// * Filter users by badge type
 pub fn badge_granted(env: &Env, user: Address, badge: Badge) {
     // Topics: [EventName, User, BadgeId] - indexed for filtering
-    let topics = (TOPIC_BADGE_GRANTED, user.clone(), badge.id.clone());
+    let badge_id = match badge {
+        Badge::Rookie => symbol_short!("ROOKIE"),
+        Badge::Explorer => symbol_short!("EXPLORER"),
+        Badge::Veteran => symbol_short!("VETERAN"),
+        Badge::Master => symbol_short!("MASTER"),
+        Badge::Legend => symbol_short!("LEGEND"),
+    };
+    let topics = (TOPIC_BADGE_GRANTED, user.clone(), badge_id);
     // Data: empty (badge already in topics)
     let data = ();
     env.events().publish(topics, data);

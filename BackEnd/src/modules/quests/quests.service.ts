@@ -11,13 +11,32 @@ import { CreateQuestDto } from './dto/create-quest.dto';
 import { UpdateQuestDto } from './dto/update-quest.dto';
 import { QueryQuestsDto } from './dto/query-quests.dto';
 
-import {
-  QuestResponseDto,
-  PaginatedQuestsResponseDto,
-  QuestCreatedEvent,
-  QuestUpdatedEvent,
-  QuestDeletedEvent,
-} from './dto';
+import { QuestResponseDto } from './dto/quest-response.dto';
+import { PaginatedQuestsResponseDto } from './dto/quest-response.dto';
+class QuestCreatedEvent {
+  constructor(
+    public id: string,
+    public title: string,
+    public createdBy: string,
+    public rewardAmount: string,
+  ) {}
+}
+
+class QuestUpdatedEvent {
+  constructor(
+    public id: string,
+    public title: string,
+    public updatedBy: string,
+  ) {}
+}
+
+class QuestDeletedEvent {
+  constructor(
+    public id: string,
+    public title: string,
+  ) {}
+}
+
 import { CacheService } from '../cache/cache.service';
 import { CACHE_KEYS, CACHE_TTL } from '../../config/cache.config';
 
@@ -90,9 +109,9 @@ export class QuestsService {
 async findAll(queryDto: QueryQuestsDto): Promise<PaginatedQuestsResponseDto> {
   const {
     status,
-    creatorAddress,
-    minReward,
-    maxReward,
+    createdBy,
+    search,
+    category,
     cursor,
     limit = 10,
   } = queryDto;
@@ -100,9 +119,9 @@ async findAll(queryDto: QueryQuestsDto): Promise<PaginatedQuestsResponseDto> {
   // Updated cache key (removed page-based params)
   const cacheKey = `${CACHE_KEYS.QUESTS}:${JSON.stringify({
     status,
-    creatorAddress,
-    minReward,
-    maxReward,
+    createdBy,
+    search,
+    category,
     cursor,
     limit,
   })}`;
@@ -120,18 +139,10 @@ async findAll(queryDto: QueryQuestsDto): Promise<PaginatedQuestsResponseDto> {
     queryBuilder.andWhere('quest.status = :status', { status });
   }
 
-  if (creatorAddress) {
-    queryBuilder.andWhere('quest.createdBy = :creatorAddress', {
-      creatorAddress,
+  if (createdBy) {
+    queryBuilder.andWhere('quest.createdBy = :createdBy', {
+      createdBy,
     });
-  }
-
-  if (minReward !== undefined) {
-    queryBuilder.andWhere('quest.rewardAmount >= :minReward', { minReward });
-  }
-
-  if (maxReward !== undefined) {
-    queryBuilder.andWhere('quest.rewardAmount <= :maxReward', { maxReward });
   }
 
   // ⚠️ Force consistent ordering for cursor pagination
@@ -152,8 +163,8 @@ async findAll(queryDto: QueryQuestsDto): Promise<PaginatedQuestsResponseDto> {
   const data = hasNextPage ? quests.slice(0, -1) : quests;
 
   const nextCursor = hasNextPage
-    ? data[data.length - 1].createdAt
-    : null;
+    ? data[data.length - 1].createdAt.toISOString()
+    : undefined;
 
   const result: PaginatedQuestsResponseDto = {
     data: data.map((quest) => QuestResponseDto.fromEntity(quest)),
@@ -252,7 +263,7 @@ async findAll(queryDto: QueryQuestsDto): Promise<PaginatedQuestsResponseDto> {
     // Emit quest updated event
     this.eventEmitter.emit(
       'quest.updated',
-      new QuestUpdatedEvent(id, updateQuestDto as any),
+      new QuestUpdatedEvent(id, updateQuestDto.title || 'Untitled', 'system'),
     );
 
     // Invalidate caches

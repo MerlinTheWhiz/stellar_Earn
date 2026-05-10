@@ -14,6 +14,7 @@ export class ApiResponseDto<T> {
   @ApiProperty({
     description: 'Response metadata including timestamp',
     type: 'object',
+    additionalProperties: true,
     example: {
       timestamp: 1700000000000,
     },
@@ -47,6 +48,7 @@ export class PaginatedResponseDto<T> {
   @ApiProperty({
     description: 'Pagination metadata',
     type: 'object',
+    additionalProperties: true,
   })
   meta: {
     timestamp: number;

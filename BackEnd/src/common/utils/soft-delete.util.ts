@@ -3,7 +3,7 @@ import { SelectQueryBuilder, DeleteResult } from 'typeorm';
 /**
  * Soft delete utility functions for TypeORM entities
  */
-export class SoftDeleteUtil<T> {
+export class SoftDeleteUtil<T extends Record<string, any>> {
   private alias: string;
 
   constructor(private queryBuilder: SelectQueryBuilder<T>) {
@@ -30,63 +30,11 @@ export class SoftDeleteUtil<T> {
   includeDeleted(): SelectQueryBuilder<T> {
     return this.queryBuilder;
   }
-
-  /**
-   * Performs soft delete by setting deletedAt timestamp
-   */
-  async softDelete(id: string): Promise<DeleteResult> {
-    return this.queryBuilder
-      .update()
-      .set({ deletedAt: new Date() })
-      .where(`${this.alias}.id = :id`, { id })
-      .execute();
-  }
-
-  /**
-   * Restores a soft deleted record by setting deletedAt to null
-   */
-  async restore(id: string): Promise<DeleteResult> {
-    return this.queryBuilder
-      .update()
-      .set({ deletedAt: null })
-      .where(`${this.alias}.id = :id`, { id })
-      .execute();
-  }
-
-  /**
-   * Performs soft delete based on custom conditions
-   */
-  async softDeleteBy(conditions: Record<string, any>): Promise<DeleteResult> {
-    const whereConditions = Object.keys(conditions).map(
-      key => `${this.alias}.${key} = :${key}`
-    ).join(' AND ');
-
-    return this.queryBuilder
-      .update()
-      .set({ deletedAt: new Date() })
-      .where(whereConditions, conditions)
-      .execute();
-  }
-
-  /**
-   * Restores records based on custom conditions
-   */
-  async restoreBy(conditions: Record<string, any>): Promise<DeleteResult> {
-    const whereConditions = Object.keys(conditions).map(
-      key => `${this.alias}.${key} = :${key}`
-    ).join(' AND ');
-
-    return this.queryBuilder
-      .update()
-      .set({ deletedAt: null })
-      .where(whereConditions, conditions)
-      .execute();
-  }
 }
 
 /**
  * Extension method for SelectQueryBuilder to add soft delete functionality
  */
-export function withSoftDelete<T>(queryBuilder: SelectQueryBuilder<T>): SoftDeleteUtil<T> {
+export function withSoftDelete<T extends Record<string, any>>(queryBuilder: SelectQueryBuilder<T>): SoftDeleteUtil<T> {
   return new SoftDeleteUtil(queryBuilder);
 }

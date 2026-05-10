@@ -341,13 +341,12 @@ export class PayoutsService {
       .getRawOne();
 
     return {
-      totalPayouts: parseInt(stats.totalPayouts, 10),
+      total: parseInt(stats.totalPayouts, 10),
       totalAmount: parseFloat(stats.totalAmount),
-      pendingPayouts: parseInt(stats.pendingPayouts, 10),
-      pendingAmount: parseFloat(stats.pendingAmount),
-      completedPayouts: parseInt(stats.completedPayouts, 10),
-      completedAmount: parseFloat(stats.completedAmount),
-      failedPayouts: parseInt(stats.failedPayouts, 10),
+      pendingCount: parseInt(stats.pendingPayouts, 10),
+      completedCount: parseInt(stats.completedPayouts, 10),
+      failedCount: parseInt(stats.failedPayouts, 10),
+      asset: 'XLM',
     };
   }
 

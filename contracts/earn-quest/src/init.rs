@@ -16,7 +16,7 @@ pub fn initialize(env: &Env, config: InitConfig) {
     storage::set_admin(env, &config.admin);
     storage::set_version(env, config.version);
     storage::set_config(env, &config.config_params);
-    reputation::seed_default_badge_types(env);
+    reputation::seed_default_badge_types(env, &config.admin);
     storage::mark_initialized(env);
 }
 

@@ -2,7 +2,7 @@ use crate::errors::Error;
 use crate::events;
 use crate::storage;
 use crate::types::{Badge, BadgeType, Role, UserBadges, UserCore};
-use soroban_sdk::{Address, Env, String, Symbol, Vec};
+use soroban_sdk::{Address, Env, String, Symbol, Vec, symbol_short};
 
 const LEVEL_2_XP: u64 = 300;
 const LEVEL_3_XP: u64 = 600;
@@ -134,4 +134,155 @@ pub fn grant_badge(env: &Env, caller: &Address, user: &Address, badge: Badge) ->
 /// A `UserCore` struct containing the user's statistics.
 pub fn get_user_stats(env: &Env, user: &Address) -> UserCore {
     storage::get_user_stats_or_default(env, user)
+}
+
+/// Seeds default badge types into the contract.
+///
+/// This function registers common badge types that are available by default.
+///
+/// # Arguments
+///
+/// * `env` - The contract environment.
+///
+/// # Returns
+///
+/// * `Ok(())` if seeding was successful.
+/// * `Err(Error)` if any operation fails.
+pub fn seed_default_badge_types(env: &Env, caller: &Address) -> Result<(), Error> {
+    // Verify caller has admin role
+    if !storage::is_admin(env, caller) && !storage::has_role(env, caller, &Role::BadgeAdmin) {
+        return Err(Error::Unauthorized);
+    }
+    
+    // Seed common badge types
+    let rookie = BadgeType {
+        id: symbol_short!("ROOKIE"),
+        name: String::from_str(env, "Rookie"),
+        description: String::from_str(env, "Initial badge for new users"),
+        xp_reward: 10,
+    };
+    
+    let explorer = BadgeType {
+        id: symbol_short!("EXPLORER"),
+        name: String::from_str(env, "Explorer"),
+        description: String::from_str(env, "For users who have explored multiple quests"),
+        xp_reward: 20,
+    };
+    
+    let veteran = BadgeType {
+        id: symbol_short!("VETERAN"),
+        name: String::from_str(env, "Veteran"),
+        description: String::from_str(env, "For experienced quest completers"),
+        xp_reward: 30,
+    };
+    
+    let master = BadgeType {
+        id: symbol_short!("MASTER"),
+        name: String::from_str(env, "Master"),
+        description: String::from_str(env, "For top-tier contributors"),
+        xp_reward: 50,
+    };
+    
+    let legend = BadgeType {
+        id: symbol_short!("LEGEND"),
+        name: String::from_str(env, "Legend"),
+        description: String::from_str(env, "The highest achievement level"),
+        xp_reward: 100,
+    };
+    
+    // Register each badge type
+    register_badge_type(env, caller, &rookie)?;
+    register_badge_type(env, caller, &explorer)?;
+    register_badge_type(env, caller, &veteran)?;
+    register_badge_type(env, caller, &master)?;
+    register_badge_type(env, caller, &legend)?;
+    
+    Ok(())
+}
+
+/// Registers a new badge type in the contract.
+///
+/// # Arguments
+///
+/// * `env` - The contract environment.
+/// * `caller` - The address of the caller (must be Admin or BadgeAdmin).
+/// * `badge_type` - The badge type to register.
+///
+/// # Returns
+///
+/// * `Ok(())` if registration was successful.
+/// * `Err(Error)` if any operation fails.
+pub fn register_badge_type(env: &Env, caller: &Address, badge_type: &BadgeType) -> Result<(), Error> {
+    // Verify caller has admin role
+    if !storage::is_admin(env, caller) && !storage::has_role(env, caller, &Role::BadgeAdmin) {
+        return Err(Error::Unauthorized);
+    }
+    
+    // Store the badge type
+    storage::set_badge_type(env, badge_type);
+    
+    // Add to the list of badge type IDs
+    storage::add_badge_type_id(env, &badge_type.id);
+    
+    // Emit event
+    events::badge_type_registered(env, badge_type.id.clone(), badge_type.name.clone());
+    
+    Ok(())
+}
+
+/// Updates an existing badge type in the contract.
+///
+/// # Arguments
+///
+/// * `env` - The contract environment.
+/// * `caller` - The address of the caller (must be Admin or BadgeAdmin).
+/// * `badge_type` - The updated badge type.
+///
+/// # Returns
+///
+/// * `Ok(())` if update was successful.
+/// * `Err(Error)` if any operation fails.
+pub fn update_badge_type(env: &Env, caller: &Address, badge_type: &BadgeType) -> Result<(), Error> {
+    // Verify caller has admin role
+    if !storage::is_admin(env, caller) && !storage::has_role(env, caller, &Role::BadgeAdmin) {
+        return Err(Error::Unauthorized);
+    }
+    
+    // Update the badge type
+    storage::set_badge_type(env, badge_type);
+    
+    // Emit event
+    events::badge_type_updated(env, badge_type.id.clone());
+    
+    Ok(())
+}
+
+/// Removes a badge type from the contract.
+///
+/// # Arguments
+///
+/// * `env` - The contract environment.
+/// * `caller` - The address of the caller (must be Admin or BadgeAdmin).
+/// * `id` - The ID of the badge type to remove.
+///
+/// # Returns
+///
+/// * `Ok(())` if removal was successful.
+/// * `Err(Error)` if any operation fails.
+pub fn remove_badge_type(env: &Env, caller: &Address, id: &Symbol) -> Result<(), Error> {
+    // Verify caller has admin role
+    if !storage::is_admin(env, caller) && !storage::has_role(env, caller, &Role::BadgeAdmin) {
+        return Err(Error::Unauthorized);
+    }
+    
+    // Remove from storage
+    storage::remove_badge_type(env, id);
+    
+    // Remove from the list of badge type IDs
+    storage::remove_badge_type_id(env, id);
+    
+    // Emit event
+    events::badge_type_removed(env, id.clone());
+    
+    Ok(())
 }

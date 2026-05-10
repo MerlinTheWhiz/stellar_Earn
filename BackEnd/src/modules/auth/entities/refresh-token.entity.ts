@@ -71,7 +71,7 @@ export class RefreshToken {
   revokedAt: Date | null;
 
   @Column({ type: 'varchar', length: 32, nullable: true })
-  revokedReason: RefreshTokenRevokeReason | null;
+  revokedReason: string | null;
 
   @CreateDateColumn()
   createdAt: Date;

@@ -6,6 +6,9 @@ import {
   IsUUID,
   MaxLength,
   MinLength,
+  IsInt,
+  Min,
+  Max,
 } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import {
@@ -13,7 +16,7 @@ import {
   NotificationPriority,
 } from '../entities/notification.entity';
 
-import { IsOptional, IsInt, Min, Max } from 'class-validator';
+
 import { Type } from 'class-transformer';
 import { CursorPaginationDto } from '../../../common/dto/pagination.dto';
 

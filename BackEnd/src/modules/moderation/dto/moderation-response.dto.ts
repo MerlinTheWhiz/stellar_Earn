@@ -150,6 +150,7 @@ export class ModerationStatsResponseDto {
   @ApiProperty({
     description: 'Moderation statistics',
     type: 'object',
+    additionalProperties: true,
     example: {
       pending: 15,
       approved: 150,

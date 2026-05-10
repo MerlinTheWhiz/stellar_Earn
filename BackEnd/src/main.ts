@@ -10,8 +10,6 @@ import * as express from 'express';
 import { setupSwagger } from './config/swagger.config';
 import helmet from 'helmet';
 import { AppModule } from './app.module';
-import { JobsService } from './modules/jobs/jobs.service';
-import { createBullBoardRouter } from './modules/jobs/jobs.board';
 import { CustomValidationPipe } from './common/pipes/validation.pipe';
 import { SanitizationPipe } from './common/pipes/sanitization.pipe';
 import { ValidationExceptionFilter } from './common/filters/validation-exception.filter';
@@ -131,15 +129,6 @@ async function bootstrap() {
     });
 
     setupSwagger(app, configService);
-
-    try {
-      const jobsService = app.get(JobsService);
-      const bullRouter = createBullBoardRouter(jobsService as JobsService);
-      app.use('/admin/queues', bullRouter);
-      logger.log('Bull Board mounted at /admin/queues', 'Bootstrap');
-    } catch {
-      logger.debug('Bull Board not available, skipping mount', 'Bootstrap');
-    }
 
     logger.log('Swagger configured and versioning enabled', 'Bootstrap');
 

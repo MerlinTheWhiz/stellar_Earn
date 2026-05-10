@@ -41,9 +41,30 @@ function isClient(): boolean {
   return typeof window !== 'undefined';
 }
 
+const ACCESS_TOKEN_KEY = 'stellar_earn_access_token';
+const REFRESH_TOKEN_KEY = 'stellar_earn_refresh_token';
+
 export const tokenManager = {
+  getAccessToken(): string | null {
+    if (!isClient()) return null;
+    return window.localStorage.getItem(ACCESS_TOKEN_KEY);
+  },
+
+  getRefreshToken(): string | null {
+    if (!isClient()) return null;
+    return window.localStorage.getItem(REFRESH_TOKEN_KEY);
+  },
+
+  setTokens(tokens: AuthTokens): void {
+    if (!isClient()) return;
+    window.localStorage.setItem(ACCESS_TOKEN_KEY, tokens.accessToken);
+    window.localStorage.setItem(REFRESH_TOKEN_KEY, tokens.refreshToken);
+  },
+
   clearTokens(): void {
     if (!isClient()) return;
+    window.localStorage.removeItem(ACCESS_TOKEN_KEY);
+    window.localStorage.removeItem(REFRESH_TOKEN_KEY);
   },
 };
 

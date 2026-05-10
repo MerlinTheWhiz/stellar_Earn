@@ -47,9 +47,9 @@ export class HealthController {
     summary: 'Health check (legacy) — alias for /health/deep',
     description: 'This endpoint is deprecated. Use /health/deep for full diagnostics.',
   })
-  async root(): Promise<DeepHealthResponse> {
+  async root(@Res({ passthrough: true }) res: Response): Promise<DeepHealthResponse> {
     this.logger.debug('Legacy health check (/) - redirecting to deep');
-    return this.deep();
+    return this.deep(res);
   }
 
   @Get('ready')
@@ -61,12 +61,10 @@ export class HealthController {
   @ApiResponse({ 
     status: 200, 
     description: 'Service is ready to accept traffic',
-    type: ReadyHealthResponse,
   })
   @ApiResponse({ 
     status: 503, 
     description: 'Service is not ready - critical dependencies are down',
-    type: ReadyHealthResponse,
   })
   async ready(@Res({ passthrough: true }) res: Response): Promise<ReadyHealthResponse> {
     this.logger.debug('Readiness check starting');
@@ -109,12 +107,10 @@ export class HealthController {
   @ApiResponse({ 
     status: 200, 
     description: 'All systems operational or degraded',
-    type: DeepHealthResponse,
   })
   @ApiResponse({ 
     status: 503, 
     description: 'One or more critical services are down',
-    type: DeepHealthResponse,
   })
   async deep(@Res({ passthrough: true }) res: Response): Promise<DeepHealthResponse> {
     this.logger.debug('Deep health check starting');

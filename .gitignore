@@ -9,7 +9,6 @@ Cargo.lock
 .soroban/
 
 # Node / JS
-node_modules/
 **/node_modules/
 pnpm-lock.yaml
 package-lock.json
@@ -21,11 +20,6 @@ yarn.lock
 .DS_Store
 Thumbs.db
 
-# Dependencies
-node_modules/
-*/node_modules/
-**/node_modules/
-
 # Environment variables
 .env
 .env.local
@@ -33,6 +27,11 @@ node_modules/
 */.env
 */.env.local
 **/.env
+
+# Dependencies
+node_modules/
+*/node_modules/
+**/node_modules/
 
 # Build outputs
 dist/

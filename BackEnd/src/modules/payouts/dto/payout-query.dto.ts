@@ -3,17 +3,20 @@ import { IsOptional, IsEnum, IsString } from 'class-validator';
 import { CursorPaginationDto, PaginatedResponseDto } from '../../../common/dto/pagination.dto';
 
 export enum PayoutStatus {
-  PENDING = 'PENDING',
-  PROCESSING = 'PROCESSING',
-  COMPLETED = 'COMPLETED',
-  FAILED = 'FAILED',
-  CANCELLED = 'CANCELLED',
+  PENDING = 'pending',
+  PROCESSING = 'processing',
+  COMPLETED = 'completed',
+  FAILED = 'failed',
+  CANCELLED = 'cancelled',
+  RETRY_SCHEDULED = 'retry_scheduled',
+  AWAITING_APPROVAL = 'awaiting_approval',
 }
 
 export enum PayoutType {
-  QUEST_REWARD = 'QUEST_REWARD',
-  BONUS = 'BONUS',
-  REFUND = 'REFUND',
+  QUEST_REWARD = 'quest_reward',
+  BONUS = 'bonus',
+  REFUND = 'refund',
+  REFERRAL = 'referral',
 }
 
 /**
@@ -61,14 +64,14 @@ export class PayoutResponseDto {
   @ApiProperty() asset: string;
   @ApiProperty({ enum: PayoutStatus }) status: PayoutStatus;
   @ApiProperty({ enum: PayoutType }) type: PayoutType;
-  @ApiPropertyOptional() questId?: string;
-  @ApiPropertyOptional() submissionId?: string;
-  @ApiPropertyOptional() transactionHash?: string;
-  @ApiPropertyOptional() stellarLedger?: number;
-  @ApiPropertyOptional() failureReason?: string;
+  @ApiPropertyOptional() questId?: string | null;
+  @ApiPropertyOptional() submissionId?: string | null;
+  @ApiPropertyOptional() transactionHash?: string | null;
+  @ApiPropertyOptional() stellarLedger?: number | null;
+  @ApiPropertyOptional() failureReason?: string | null;
   @ApiProperty() retryCount: number;
-  @ApiPropertyOptional() processedAt?: Date;
-  @ApiPropertyOptional() claimedAt?: Date;
+  @ApiPropertyOptional() processedAt?: Date | null;
+  @ApiPropertyOptional() claimedAt?: Date | null;
   @ApiProperty() createdAt: Date;
 }
 

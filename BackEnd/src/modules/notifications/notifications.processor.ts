@@ -1,5 +1,5 @@
 import { Processor, WorkerHost } from '@nestjs/bullmq';
-import { Job } from 'bullmq';
+import { Job } from 'C:/Users/HP/Desktop/stellar_Earn/BackEnd/node_modules/.pnpm/bullmq@5.76.6/node_modules/bullmq/dist/esm/classes/job';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Logger } from '@nestjs/common';

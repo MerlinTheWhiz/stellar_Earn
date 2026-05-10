@@ -84,6 +84,33 @@ interface ValidationResult {
 }
 
 /**
+ * Next.js client bundles only inline NEXT_PUBLIC_* env vars when accessed
+ * statically. Dynamic access (process.env[name]) returns undefined in browser.
+ */
+function readEnvValue(name: string): string | undefined {
+  switch (name) {
+    case 'NEXT_PUBLIC_API_BASE_URL':
+      return process.env.NEXT_PUBLIC_API_BASE_URL;
+    case 'NEXT_PUBLIC_STELLAR_NETWORK':
+      return process.env.NEXT_PUBLIC_STELLAR_NETWORK;
+    case 'NEXT_PUBLIC_SOROBAN_RPC_URL':
+      return process.env.NEXT_PUBLIC_SOROBAN_RPC_URL;
+    case 'NEXT_PUBLIC_CONTRACT_ID':
+      return process.env.NEXT_PUBLIC_CONTRACT_ID;
+    case 'NEXT_PUBLIC_ANALYTICS_TEST_MODE':
+      return process.env.NEXT_PUBLIC_ANALYTICS_TEST_MODE;
+    case 'NEXT_PUBLIC_ANALYTICS_ID':
+      return process.env.NEXT_PUBLIC_ANALYTICS_ID;
+    case 'NEXT_PUBLIC_SENTRY_DSN':
+      return process.env.NEXT_PUBLIC_SENTRY_DSN;
+    case 'E2E_BASE_URL':
+      return process.env.E2E_BASE_URL;
+    default:
+      return process.env[name];
+  }
+}
+
+/**
  * Validates a single environment variable
  */
 function validateEnvVar(
@@ -95,7 +122,7 @@ function validateEnvVar(
     default?: string;
   }
 ): ValidationError | null {
-  const value = process.env[name];
+  const value = readEnvValue(name);
 
   // Check if required variable is missing
   if (config.required && !value) {
@@ -126,7 +153,7 @@ export function validateEnv(): ValidationResult {
 
   // Check optional variables and warn about missing ones
   for (const [name, config] of Object.entries(OPTIONAL_ENV_VARS)) {
-    const value = process.env[name];
+    const value = readEnvValue(name);
     if (!value && config.default) {
       warnings.push(`${name} not set, using default: "${config.default}"`);
     }
@@ -197,7 +224,7 @@ export function getEnv(
   name: keyof typeof OPTIONAL_ENV_VARS,
   defaultValue?: string
 ): string {
-  const value = process.env[name];
+  const value = readEnvValue(name);
   if (value) return value;
 
   const config = OPTIONAL_ENV_VARS[name];
@@ -211,7 +238,7 @@ export function getEnv(
  * Throws an error if the variable is not set
  */
 export function getRequiredEnv(name: keyof typeof REQUIRED_ENV_VARS): string {
-  const value = process.env[name];
+  const value = readEnvValue(name);
   if (!value) {
     throw new Error(
       `Required environment variable ${name} is not set. ` +

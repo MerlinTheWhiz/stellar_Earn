@@ -93,6 +93,7 @@ export class WebhookEventResponseDto {
   @ApiProperty({
     description: 'Event payload',
     type: 'object',
+    additionalProperties: true,
   })
   payload: any;
 

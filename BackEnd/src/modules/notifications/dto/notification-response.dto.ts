@@ -140,6 +140,7 @@ export class UpdatePreferenceResponseDto {
   @ApiProperty({
     description: 'Updated preference settings',
     type: 'object',
+    additionalProperties: true,
     example: {
       type: 'QUEST',
       enabledChannels: ['EMAIL', 'IN_APP'],
@@ -193,6 +194,7 @@ export class NotificationAnalyticsResponseDto {
   @ApiProperty({
     description: 'Notifications by type',
     type: 'object',
+    additionalProperties: true,
     example: {
       INFO: 50,
       SUCCESS: 40,
@@ -206,6 +208,7 @@ export class NotificationAnalyticsResponseDto {
   @ApiProperty({
     description: 'Notifications by channel',
     type: 'object',
+    additionalProperties: true,
     example: {
       EMAIL: 80,
       IN_APP: 50,
