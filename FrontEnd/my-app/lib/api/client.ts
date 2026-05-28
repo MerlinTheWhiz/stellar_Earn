@@ -45,27 +45,61 @@ function isClient(): boolean {
 const ACCESS_TOKEN_KEY = 'stellar_earn_access_token';
 const REFRESH_TOKEN_KEY = 'stellar_earn_refresh_token';
 
+// Add these helper functions right before tokenManager
+
+function isValidJwtToken(token: string | null): boolean {
+  if (!token || typeof token !== 'string') return false;
+  const parts = token.split('.');
+  if (parts.length !== 3) return false;
+  if (parts.some(part => part.length === 0)) return false;
+  return true;
+}
+
+function safeGetToken(key: string): string | null {
+  if (!isClient()) return null;
+  try {
+    const token = window.localStorage.getItem(key);
+    if (!token) return null;
+    if (!isValidJwtToken(token)) {
+      console.warn(`[tokenManager] Invalid token format for key: ${key}`);
+      window.localStorage.removeItem(key);
+      return null;
+    }
+    return token;
+  } catch (error) {
+    console.error(`[tokenManager] Failed to read token:`, error);
+    return null;
+  }
+}
+
+function safeSetToken(key: string, token: string): void {
+  if (!isClient()) return;
+  try {
+    window.localStorage.setItem(key, token);
+  } catch (error) {
+    console.error(`[tokenManager] Failed to save token:`, error);
+  }
+}
+
 export const tokenManager = {
   getAccessToken(): string | null {
-    if (!isClient()) return null;
-    return window.localStorage.getItem(ACCESS_TOKEN_KEY);
+    return safeGetToken(ACCESS_TOKEN_KEY);
   },
-
   getRefreshToken(): string | null {
-    if (!isClient()) return null;
-    return window.localStorage.getItem(REFRESH_TOKEN_KEY);
+    return safeGetToken(REFRESH_TOKEN_KEY);
   },
-
   setTokens(tokens: AuthTokens): void {
-    if (!isClient()) return;
-    window.localStorage.setItem(ACCESS_TOKEN_KEY, tokens.accessToken);
-    window.localStorage.setItem(REFRESH_TOKEN_KEY, tokens.refreshToken);
+    safeSetToken(ACCESS_TOKEN_KEY, tokens.accessToken);
+    safeSetToken(REFRESH_TOKEN_KEY, tokens.refreshToken);
   },
-
   clearTokens(): void {
     if (!isClient()) return;
-    window.localStorage.removeItem(ACCESS_TOKEN_KEY);
-    window.localStorage.removeItem(REFRESH_TOKEN_KEY);
+    try {
+      window.localStorage.removeItem(ACCESS_TOKEN_KEY);
+      window.localStorage.removeItem(REFRESH_TOKEN_KEY);
+    } catch (error) {
+      console.error('[tokenManager] Failed to clear tokens:', error);
+    }
   },
 };
 
