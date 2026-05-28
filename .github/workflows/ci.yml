@@ -69,6 +69,21 @@ jobs:
           components: rustfmt, clippy
           targets: wasm32-unknown-unknown
 
+      - name: Check for default Rust toolchain (CI safeguard)
+        run: |
+          set -e
+          if ! command -v rustup &> /dev/null; then
+            echo "❌ rustup not found."
+            exit 1
+          fi
+          DEFAULT_TOOLCHAIN=$(rustup show active-toolchain 2>/dev/null | cut -d' ' -f1)
+          if [[ -z "$DEFAULT_TOOLCHAIN" ]]; then
+            echo "❌ No default toolchain set. Running 'rustup default stable'."
+            rustup default stable
+          else
+            echo "Found default toolchain: $DEFAULT_TOOLCHAIN"
+          fi
+          
       - name: Cache cargo registry
         uses: actions/cache@v4
         with:
