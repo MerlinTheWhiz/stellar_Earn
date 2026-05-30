@@ -8,12 +8,7 @@ import { QuestAnalyticsService } from './services/quest-analytics.service';
 import { UserAnalyticsService } from './services/user-analytics.service';
 import { WebVitalsAnalyticsService } from './services/web-vitals.service';
 import { CacheService } from './services/cache.service';
-import { AnalyticsReportService } from './services/report.service';
-import { AnalyticsAggregationService } from './services/aggregation.service';
-import { QuestAnalyticsAggregator } from './aggregators/quest-aggregator';
-import { UserAnalyticsAggregator } from './aggregators/user-aggregator';
-import { PlatformAnalyticsAggregator } from './aggregators/platform-aggregator';
-import { BaseAnalyticsExporter } from './exporters/base-exporter';
+import { StreamExportService } from './services/stream-export.service';
 import { Quest } from './entities/quest.entity';
 import { Submission } from './entities/submission.entity';
 import { Payout } from './entities/payout.entity';
@@ -43,19 +38,13 @@ import { User as AnalyticsUser } from './entities/user.entity';
     UserAnalyticsService,
     WebVitalsAnalyticsService,
     CacheService,
-    AnalyticsReportService,
-    AnalyticsAggregationService,
-    QuestAnalyticsAggregator,
-    UserAnalyticsAggregator,
-    PlatformAnalyticsAggregator,
-    BaseAnalyticsExporter,
+    StreamExportService,
   ],
   exports: [
     PlatformAnalyticsService,
     QuestAnalyticsService,
     UserAnalyticsService,
-    AnalyticsReportService,
-    AnalyticsAggregationService,
+    StreamExportService,
   ],
 })
 export class AnalyticsModule {}

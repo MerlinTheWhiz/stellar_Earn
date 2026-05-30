@@ -85,19 +85,11 @@ jobs:
           components: rustfmt, clippy
           targets: wasm32-unknown-unknown
 
-      - name: Ensure Rust toolchain
+      - name: Remove Cargo.lock to prevent cache issues
         run: |
-          set -e
-          if ! command -v rustup &> /dev/null; then
-            echo "❌ rustup not found."
-            exit 1
-          fi
-          DEFAULT_TOOLCHAIN=$(rustup show active-toolchain | cut -d' ' -f1)
-          if [[ -z "$DEFAULT_TOOLCHAIN" ]]; then
-            echo "No default toolchain set. Setting stable."
-            rustup default stable
-          else
-            echo "Using toolchain: $DEFAULT_TOOLCHAIN"
+          if [ -f "Cargo.lock" ]; then
+            rm Cargo.lock
+            echo "Removed Cargo.lock to prevent CI cache corruption"
           fi
 
       - name: Cache cargo registry
@@ -106,15 +98,15 @@ jobs:
           path: |
             ~/.cargo/registry
             ~/.cargo/git
-          key: ${{ runner.os }}-cargo-registry-${{ hashFiles('contracts/earn-quest/Cargo.lock') }}
+          key: ${{ runner.os }}-cargo-registry-${{ hashFiles('**/Cargo.toml') }}
           restore-keys: |
             ${{ runner.os }}-cargo-registry-
 
       - name: Cache target directory
         uses: actions/cache@v4
         with:
-          path: contracts/earn-quest/target
-          key: ${{ runner.os }}-cargo-target-${{ hashFiles('contracts/earn-quest/Cargo.lock') }}
+          path: Contract/target
+          key: ${{ runner.os }}-cargo-target-${{ hashFiles('**/Cargo.toml') }}
           restore-keys: |
             ${{ runner.os }}-cargo-target-
 
