@@ -19,6 +19,7 @@ import {
   PayoutResponseDto,
   PayoutStatsDto,
 } from './dto/payout-query.dto';
+import { FraudRiskRulesService } from './services/fraud-risk-rules.service';
 
 @Injectable()
 export class PayoutsService {
@@ -29,7 +30,8 @@ export class PayoutsService {
     private readonly payoutRepository: Repository<Payout>,
     private readonly configService: ConfigService,
     private readonly eventEmitter: EventEmitter2,
-  ) { }
+    private readonly fraudRiskRulesService: FraudRiskRulesService,
+  ) {}
 
   /**
    * Create a new payout record
