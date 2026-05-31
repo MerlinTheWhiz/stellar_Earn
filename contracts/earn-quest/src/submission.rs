@@ -293,7 +293,8 @@ pub fn validate_claim_data(
 pub fn validate_claim(env: &Env, quest_id: &Symbol, submitter: &Address) -> Result<(), Error> {
     let quest = storage::get_quest(env, quest_id)?;
     let submission = storage::get_submission(env, quest_id, submitter)?;
-    validate_claim_data(&quest, &submission)
+    validate_claim_data(&quest, &submission)?;
+    Ok(())
 }
 
 //================================================================================

@@ -151,7 +151,6 @@ pub struct UserCore {
     pub quests_completed: u32,
 }
 
-
 /// Separate storage entry for a user's badge collection.
 /// Loaded only when badges are displayed or granted.
 #[contracttype]
@@ -193,7 +192,6 @@ pub struct BadgeType {
 /// Backward-compatible alias: existing code that references `UserStats` still
 /// compiles.  The `badges` field has moved to `UserBadges`.
 pub type UserStats = UserCore;
-
 // ─────────────────────────────────────────────────────────────────────────────
 // EscrowInfo  →  EscrowBalances  +  EscrowMeta
 // ─────────────────────────────────────────────────────────────────────────────

@@ -20,6 +20,7 @@ import {
   PayoutResponseDto,
   PayoutStatsDto,
 } from './dto/payout-query.dto';
+import { FraudRiskRulesService } from './services/fraud-risk-rules.service';
 import {
   encodeCursor,
   decodeCursor,
@@ -36,6 +37,7 @@ export class PayoutsService {
     private readonly payoutRepository: Repository<Payout>,
     private readonly configService: ConfigService,
     private readonly eventEmitter: EventEmitter2,
+    private readonly fraudRiskRulesService: FraudRiskRulesService,
   ) {}
 
   // ─── Create ────────────────────────────────────────────────────────────────

@@ -13,12 +13,14 @@ import { WebhookProcessor } from './processors/webhook.processor';
 import { AnalyticsProcessor } from './processors/analytics.processor';
 import { QuestProcessor } from './processors/quest.processor';
 import { QuestStateReconciliationProcessor } from './processors/quest-state-reconciliation.processor';
+import { DependencyProcessor } from './processors/dependency.processor';
 import { JobLog, JobLogRetry, JobDependency, JobSchedule } from './entities/job-log.entity';
 import { DataExport } from '../users/entities/data-export.entity';
 import { DataExportListener } from './listeners/data-export.listener';
 import { Payout } from '../payouts/entities/payout.entity';
 import { Quest } from '../quests/entities/quest.entity';
 import { StellarModule } from '../stellar/stellar.module';
+import { DependencyFreshnessService } from '../../common/services/dependency-freshness.service';
 
 @Module({
   imports: [
@@ -46,7 +48,9 @@ import { StellarModule } from '../stellar/stellar.module';
     AnalyticsProcessor,
     QuestProcessor,
     QuestStateReconciliationProcessor,
+    DependencyProcessor,
     DataExportListener,
+    DependencyFreshnessService,
   ],
   controllers: [JobsController],
   exports: [
@@ -62,6 +66,8 @@ import { StellarModule } from '../stellar/stellar.module';
     AnalyticsProcessor,
     QuestProcessor,
     QuestStateReconciliationProcessor,
+    DependencyProcessor,
+    DependencyFreshnessService,
   ],
 })
 export class JobsModule {}

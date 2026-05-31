@@ -174,6 +174,7 @@ fn malicious_token_cannot_double_claim_via_reentrancy() {
             submitter: submitter.clone(),
             proof_hash: proof.clone(),
             status: SubmissionStatus::Approved,
+            claimed_amount: 0,
             timestamp: env.ledger().timestamp(),
         };
         eq_storage::set_submission(&env, &quest_id, &submitter, &approved);
