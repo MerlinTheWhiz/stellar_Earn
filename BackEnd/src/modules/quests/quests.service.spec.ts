@@ -1,7 +1,11 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { EventEmitter2 } from '@nestjs/event-emitter';
-import { BadRequestException, ForbiddenException, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  ForbiddenException,
+  NotFoundException,
+} from '@nestjs/common';
 import { QuestsService } from './quests.service';
 import { Quest } from './entities/quest.entity';
 import { CacheService } from '../cache/cache.service';
@@ -67,17 +71,46 @@ describe('QuestsService', () => {
       const entity = { id: 'q1', ...dto, createdBy: creator, rewardAmount: 10 };
       repo.create.mockReturnValue(entity);
       repo.save.mockResolvedValue(entity);
-      jest.spyOn(require('./dto'), 'QuestResponseDto' as any, 'get').mockReturnValue({ fromEntity: (e: any) => e }).mockRestore?.();
+      jest
+        .spyOn(require('./dto'), 'QuestResponseDto' as any, 'get')
+        .mockReturnValue({ fromEntity: (e: any) => e })
+        .mockRestore?.();
 
       // patch static method via prototype
       const { QuestResponseDto } = require('./dto');
-      const spy = jest.spyOn(QuestResponseDto, 'fromEntity').mockReturnValue(entity as any);
+      const spy = jest
+        .spyOn(QuestResponseDto, 'fromEntity')
+        .mockReturnValue(entity as any);
 
       const result = await service.create(dto as any, creator);
       expect(repo.save).toHaveBeenCalledTimes(1);
-      expect(emitter.emit).toHaveBeenCalledWith('quest.created', expect.anything());
+      expect(emitter.emit).toHaveBeenCalledWith(
+        'quest.created',
+        expect.anything(),
+      );
       expect(cache.deletePattern).toHaveBeenCalled();
       spy.mockRestore();
+    });
+
+    it('returns created quest dto', async () => {
+      const entity = {
+        id: 'q1',
+        title: 'Test Quest',
+        description: 'desc',
+        createdBy: creator,
+        rewardAmount: 10,
+      };
+
+      repo.create.mockReturnValue(entity);
+      repo.save.mockResolvedValue(entity);
+
+      const { QuestResponseDto } = require('./dto');
+
+      jest.spyOn(QuestResponseDto, 'fromEntity').mockReturnValue(entity);
+
+      const result = await service.create(dto as any, creator);
+
+      expect(result).toEqual(entity);
     });
 
     it('throws BadRequestException when end date is before start date', async () => {
@@ -86,14 +119,21 @@ describe('QuestsService', () => {
         startDate: new Date('2025-06-01'),
         endDate: new Date('2025-05-01'),
       };
-      await expect(service.create(bad as any, creator)).rejects.toThrow(BadRequestException);
+      await expect(service.create(bad as any, creator)).rejects.toThrow(
+        BadRequestException,
+      );
     });
 
     it('throws BadRequestException when moderation blocks content', async () => {
-      moderation.scanText.mockResolvedValue({ shouldBlock: true, keywordHits: ['spam'] });
+      moderation.scanText.mockResolvedValue({
+        shouldBlock: true,
+        keywordHits: ['spam'],
+      });
       repo.create.mockReturnValue({ id: 'q1', ...dto, createdBy: creator });
       repo.save.mockResolvedValue({ id: 'q1', ...dto, createdBy: creator });
-      await expect(service.create(dto as any, creator)).rejects.toThrow(BadRequestException);
+      await expect(service.create(dto as any, creator)).rejects.toThrow(
+        BadRequestException,
+      );
     });
   });
 
@@ -110,7 +150,24 @@ describe('QuestsService', () => {
 
     it('throws NotFoundException when quest does not exist', async () => {
       repo.findOne.mockResolvedValue(null);
-      await expect(service.findOne('missing')).rejects.toThrow(NotFoundException);
+      await expect(service.findOne('missing')).rejects.toThrow(
+        NotFoundException,
+      );
+    });
+
+    it('stores quest in cache after database lookup', async () => {
+      cache.get.mockResolvedValue(null);
+
+      const quest = {
+        id: 'q1',
+        title: 'Quest',
+      };
+
+      repo.findOne.mockResolvedValue(quest);
+
+      await service.findOne('q1');
+
+      expect(cache.set).toHaveBeenCalled();
     });
   });
 
@@ -128,12 +185,16 @@ describe('QuestsService', () => {
 
     it('throws NotFoundException when quest does not exist', async () => {
       repo.findOne.mockResolvedValue(null);
-      await expect(service.update('q1', {}, 'GABC')).rejects.toThrow(NotFoundException);
+      await expect(service.update('q1', {}, 'GABC')).rejects.toThrow(
+        NotFoundException,
+      );
     });
 
     it('throws ForbiddenException when caller is not the creator', async () => {
       repo.findOne.mockResolvedValue(existing);
-      await expect(service.update('q1', {}, 'OTHER')).rejects.toThrow(ForbiddenException);
+      await expect(service.update('q1', {}, 'OTHER')).rejects.toThrow(
+        ForbiddenException,
+      );
     });
 
     it('throws BadRequestException on invalid status transition', async () => {
@@ -149,12 +210,16 @@ describe('QuestsService', () => {
   describe('remove', () => {
     it('throws NotFoundException when quest does not exist', async () => {
       repo.findOne.mockResolvedValue(null);
-      await expect(service.remove('q1', 'GABC')).rejects.toThrow(NotFoundException);
+      await expect(service.remove('q1', 'GABC')).rejects.toThrow(
+        NotFoundException,
+      );
     });
 
     it('throws ForbiddenException when caller is not the creator', async () => {
       repo.findOne.mockResolvedValue({ id: 'q1', createdBy: 'GABC' });
-      await expect(service.remove('q1', 'OTHER')).rejects.toThrow(ForbiddenException);
+      await expect(service.remove('q1', 'OTHER')).rejects.toThrow(
+        ForbiddenException,
+      );
     });
 
     it('soft-deletes and emits event', async () => {
@@ -163,7 +228,10 @@ describe('QuestsService', () => {
       repo.softDelete.mockResolvedValue(undefined);
       await service.remove('q1', 'GABC');
       expect(repo.softDelete).toHaveBeenCalledWith('q1');
-      expect(emitter.emit).toHaveBeenCalledWith('quest.deleted', expect.anything());
+      expect(emitter.emit).toHaveBeenCalledWith(
+        'quest.deleted',
+        expect.anything(),
+      );
     });
   });
 
@@ -185,7 +253,9 @@ describe('QuestsService', () => {
       ['COMPLETED', 'DRAFT'],
       ['ACTIVE', 'DRAFT'],
     ])('rejects %s -> %s', (from, to) => {
-      expect(() => service.validateStatusTransition(from, to)).toThrow(BadRequestException);
+      expect(() => service.validateStatusTransition(from, to)).toThrow(
+        BadRequestException,
+      );
     });
   });
 });
