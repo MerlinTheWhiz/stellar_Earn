@@ -331,16 +331,21 @@ html.dark .quest-card__cat--community {
   font-weight: 700;
   padding: 0.1875rem 0.5rem;
   border-radius: 9999px;
-  color: #fff;
 }
+/* Easy: dark text on green (white gives only 2.28:1 – fails WCAG AA) */
 .quest-card__diff--easy {
   background: #22c55e;
+  color: #14532d;
 }
+/* Medium: dark text on orange (white gives only 2.80:1 – fails WCAG AA) */
 .quest-card__diff--medium {
   background: #f97316;
+  color: #431407;
 }
+/* Hard: white text on red (3.76:1 – passes WCAG AA large/UI) */
 .quest-card__diff--hard {
   background: #ef4444;
+  color: #fff;
 }
 
 /* Title */
