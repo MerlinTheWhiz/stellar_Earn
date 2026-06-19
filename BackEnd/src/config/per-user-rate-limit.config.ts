@@ -2,10 +2,12 @@ import { ConfigService } from '@nestjs/config';
 import { UserRole } from '../modules/auth/enums/user-role.enum';
 
 export interface PerUserRateLimitConfig {
-  [key: string]: {
-    limit: number;
-    ttl: number; // in milliseconds
-  };
+  [key: string]:
+    | {
+        limit: number;
+        ttl: number; // in milliseconds
+      }
+    | undefined;
 }
 
 /**
@@ -140,10 +142,9 @@ export class PerUserRateLimitConfigService {
    * Get rate limit config for a specific user role or tracker type
    */
   getLimit(roleOrKey: string): { limit: number; ttl: number } {
-    const config =
-      this.config[roleOrKey] ||
-      this.config[UserRole.USER] ||
-      this.config.anonymous;
+    const config = this.config[roleOrKey] ??
+      this.config[UserRole.USER] ??
+      this.config.anonymous ?? { limit: 100, ttl: 60000 };
 
     return {
       limit: config.limit,
@@ -163,6 +164,6 @@ export class PerUserRateLimitConfigService {
    */
   isRateLimited(roleOrKey: string): boolean {
     const config = this.config[roleOrKey];
-    return config && config.limit !== Infinity;
+    return config !== undefined && config.limit !== Infinity;
   }
 }

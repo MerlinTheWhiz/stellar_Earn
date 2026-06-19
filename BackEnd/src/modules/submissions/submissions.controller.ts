@@ -1,13 +1,5 @@
-import {
-  Controller,
-  Get,
-  UseGuards,
-} from '@nestjs/common';
-import {
-  ApiTags,
-  ApiOperation,
-  ApiResponse,
-} from '@nestjs/swagger';
+import { Controller, Get, UseGuards } from '@nestjs/common';
+import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { SubmissionsService } from './submissions.service';
 import { RateLimit } from '../../common/decorators/rate-limit.decorator';
@@ -22,7 +14,7 @@ export class SubmissionsController {
   @RateLimit({ name: 'submission' })
   @ApiOperation({ summary: 'Get submissions for a quest' })
   @ApiResponse({ status: 200, description: 'Submissions list returned' })
-  async getQuestSubmissions() {
+  getQuestSubmissions() {
     return { success: true, data: [] };
   }
 }
