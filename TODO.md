@@ -1,12 +1,13 @@
-# TODO - Strict TSConfig layering (src vs test)
+# TODO
 
-- [x] Inspect current TypeScript/Jest configuration in BackEnd
-- [x] Create `BackEnd/tsconfig.src.json` (src layer)
-- [x] Create `BackEnd/tsconfig.test.json` (test layer with moderate strictness)
-- [x] Update `BackEnd/tsconfig.build.json` to extend `tsconfig.src.json`
-- [x] Update `BackEnd/test/jest-integration.json` to use `./tsconfig.test.json`
-- [x] Update `BackEnd/test/jest-e2e.json` to use `./tsconfig.test.json`
-- [ ] Run unit/integration/e2e tests to validate type errors (environment setup needed: ensure `node`/`npm` are available)
-- [ ] Fix any strict type errors found in tests (if any)
-- [ ] Update documentation (testing guide) describing the new tsconfig layering
+- [x] Create git branch `blackboxai/404-improvements`
+- [ ] Redesign `FrontEnd/my-app/app/not-found.tsx`:
+
+  - [ ] Add friendly 404 illustration
+  - [ ] Add at least 2 navigation options (Home, Quest listing)
+  - [ ] Add inline search bar that queries quest search API
+  - [ ] Ensure accessible heading hierarchy (single H1)
+- [ ] Add analytics tracking for 404 hits (event name + payload)
+- [ ] Wire search results to quest listing links
+- [ ] Run frontend lint/tests/build (as available)
 
