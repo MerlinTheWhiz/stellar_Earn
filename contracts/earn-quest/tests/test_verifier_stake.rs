@@ -110,7 +110,7 @@ fn test_resolve_dispute_upheld_full_slash() {
     let arbitrator = Address::generate(&ctx.env);
     ctx.client.open_dispute(&quest_id, &submitter, &arbitrator);
 
-    ctx.client.resolve_dispute(, false, 0u32);
+    ctx.client.resolve_dispute(ctx.client.resolve_dispute(, false, 0u32);quest_id, ctx.client.resolve_dispute(, false, 0u32);submitter, ctx.client.resolve_dispute(, false, 0u32);arbitrator, ctx.client.resolve_dispute(, false, 0u32);false, ctx.client.resolve_dispute(, false, 0u32);0u32);
 
     let tok = token::Client::new(&ctx.env, &ctx.token_addr);
     // Full stake slashed to submitter (initiator)
@@ -134,7 +134,7 @@ fn test_resolve_dispute_not_upheld_no_slash() {
     ctx.client.open_dispute(&quest_id, &submitter, &arbitrator);
 
     // Not upheld — stake is NOT slashed
-    ctx.client.resolve_dispute(, false, 0u32);
+    ctx.client.resolve_dispute(ctx.client.resolve_dispute(, false, 0u32);quest_id, ctx.client.resolve_dispute(, false, 0u32);submitter, ctx.client.resolve_dispute(, false, 0u32);arbitrator, ctx.client.resolve_dispute(, false, 0u32);false, ctx.client.resolve_dispute(, false, 0u32);0u32);
 
     let tok = token::Client::new(&ctx.env, &ctx.token_addr);
     assert_eq!(tok.balance(&submitter), 0);  // nothing transferred
@@ -154,7 +154,7 @@ fn test_resolve_dispute_no_stake_still_resolves() {
     let arbitrator = Address::generate(&ctx.env);
     ctx.client.open_dispute(&quest_id, &submitter, &arbitrator);
 
-    ctx.client.resolve_dispute(, false, 0u32);
+    ctx.client.resolve_dispute(ctx.client.resolve_dispute(, false, 0u32);quest_id, ctx.client.resolve_dispute(, false, 0u32);submitter, ctx.client.resolve_dispute(, false, 0u32);arbitrator, ctx.client.resolve_dispute(, false, 0u32);false, ctx.client.resolve_dispute(, false, 0u32);0u32);
     // No panic = passed
 }
 
@@ -174,7 +174,7 @@ fn test_resolve_dispute_partial_slash() {
     ctx.client.open_dispute(&quest_id, &submitter, &arbitrator);
 
     // 50% slash: 500 to submitter, 500 back to verifier
-    ctx.client.resolve_dispute(, false, 0u32);
+    ctx.client.resolve_dispute(ctx.client.resolve_dispute(, false, 0u32);quest_id, ctx.client.resolve_dispute(, false, 0u32);submitter, ctx.client.resolve_dispute(, false, 0u32);arbitrator, ctx.client.resolve_dispute(, false, 0u32);false, ctx.client.resolve_dispute(, false, 0u32);0u32);
 
     let tok = token::Client::new(&ctx.env, &ctx.token_addr);
     assert_eq!(tok.balance(&submitter), 500);
