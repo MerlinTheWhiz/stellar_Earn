@@ -4,11 +4,6 @@ use crate::storage;
 use crate::types::{Badge, BadgeType, Role, UserCore};
 use soroban_sdk::{Address, Env, String, Symbol, symbol_short};
 
-const LEVEL_2_XP: u64 = 300;
-const LEVEL_3_XP: u64 = 600;
-const LEVEL_4_XP: u64 = 1000;
-const LEVEL_5_XP: u64 = 1500;
-
 /// Awards experience points (XP) to a user and handles leveling up.
 ///
 /// This function increments the user's total XP and the number of quests completed.
@@ -30,7 +25,7 @@ pub fn award_xp(env: &Env, user: &Address, xp_amount: u64) -> Result<UserCore, E
     stats.xp += xp_amount;
     stats.quests_completed += 1;
 
-    let new_level = calculate_level(stats.xp);
+    let new_level = calculate_level(env, stats.xp);
     let level_up = new_level > stats.level;
     stats.level = new_level;
 
@@ -47,32 +42,29 @@ pub fn award_xp(env: &Env, user: &Address, xp_amount: u64) -> Result<UserCore, E
 
 /// Calculates the user level based on their current experience points (XP).
 ///
-/// # Level Thresholds:
-/// - Level 1: 0 - 299 XP
-/// - Level 2: 300 - 599 XP
-/// - Level 3: 600 - 999 XP
-/// - Level 4: 1000 - 1499 XP
-/// - Level 5: 1500+ XP
+/// Thresholds are loaded from contract storage (level 2..N). The thresholds
+/// vector contains the minimum XP required for level 2, level 3, etc.
 ///
 /// # Arguments
 ///
+/// * `env` - The contract environment (used to read thresholds)
 /// * `xp` - The total experience points of the user.
 ///
 /// # Returns
 ///
-/// The user's level (1 to 5).
-pub fn calculate_level(xp: u64) -> u32 {
-    if xp >= LEVEL_5_XP {
-        5
-    } else if xp >= LEVEL_4_XP {
-        4
-    } else if xp >= LEVEL_3_XP {
-        3
-    } else if xp >= LEVEL_2_XP {
-        2
-    } else {
-        1
+/// The user's level (1..N).
+pub fn calculate_level(env: &Env, xp: u64) -> u32 {
+    let thresholds = storage::get_level_thresholds(env);
+    let mut level: u32 = 1;
+    let mut i = 0u32;
+    while i < thresholds.len() {
+        let th = thresholds.get(i).unwrap();
+        if xp >= th {
+            level = i + 2; // thresholds[0] -> level 2
+        }
+        i += 1;
     }
+    level
 }
 
     // Map badge to XP reward
