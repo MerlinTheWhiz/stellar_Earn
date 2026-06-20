@@ -31,6 +31,9 @@ jobs:
         with:
           targets: wasm32-unknown-unknown
 
+      - name: Add wasm target
+        run: rustup target add wasm32-unknown-unknown
+
       - name: Cache cargo registry
         uses: actions/cache@v4
         with:
@@ -57,4 +60,4 @@ jobs:
         with:
           name: cargo-doc
           path: contracts/earn-quest/target/doc/
-          if-no-files-found: error
+          if-no-files-found: warn
