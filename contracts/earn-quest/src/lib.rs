@@ -64,7 +64,22 @@ impl EarnQuestContract {
         storage::grant_role(&env, &admin, &Role::StatsAdmin);
         storage::grant_role(&env, &admin, &Role::BadgeAdmin);
         reputation::seed_default_badge_types(&env, &admin);
+        // Seed default level thresholds (levels 2..5)
+        let mut default_thresholds: Vec<u64> = Vec::new(&env);
+        default_thresholds.push_back(300u64);
+        default_thresholds.push_back(600u64);
+        default_thresholds.push_back(1000u64);
+        default_thresholds.push_back(1500u64);
+        storage::set_level_thresholds(&env, &default_thresholds);
         storage::mark_initialized(&env);
+    }
+
+    /// Set configurable level thresholds (SuperAdmin only).
+    pub fn set_level_thresholds(env: Env, caller: Address, thresholds: Vec<u64>) -> Result<(), Error> {
+        security::require_not_paused(&env)?;
+        admin::require_role(&env, &caller, Role::SuperAdmin)?;
+        storage::set_level_thresholds(&env, &thresholds);
+        Ok(())
     }
 
     /// Authorizes a contract upgrade (SuperAdmin only).

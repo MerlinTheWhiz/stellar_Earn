@@ -99,6 +99,8 @@ pub enum DataKey {
     MinCreatorLevel,
     /// Addresses whitelisted to bypass the creator level requirement
     CreatorWhitelist(Address),
+    /// Level thresholds for reputation levels (Vec<u64>, thresholds for lvl2..N)
+    LevelThresholds,
     /// Pending clawback record keyed by (quest_id, recipient)
     ClawbackPending(Symbol, Address),
 }
@@ -532,13 +534,18 @@ pub fn add_user_xp(env: &Env, user: &Address, xp_delta: u64) -> Result<UserCore,
     let mut stats = get_user_stats(env, user)?;
     stats.xp = stats.xp.saturating_add(xp_delta);
 
-    stats.level = match stats.xp {
-        x if x >= 1500 => 5,
-        x if x >= 1000 => 4,
-        x if x >= 600 => 3,
-        x if x >= 300 => 2,
-        _ => 1,
-    };
+    // Recalculate level using configurable thresholds stored in contract storage.
+    let thresholds = get_level_thresholds(env);
+    let mut level = 1u32;
+    let mut i = 0u32;
+    while i < thresholds.len() {
+        let th = thresholds.get(i).unwrap();
+        if stats.xp >= th {
+            level = i + 2; // thresholds[0] -> level 2
+        }
+        i += 1;
+    }
+    stats.level = level;
 
     set_user_stats(env, user, &stats);
     Ok(stats)
@@ -1349,6 +1356,25 @@ pub fn remove_creator_whitelist(env: &Env, address: &Address) {
         .remove(&DataKey::CreatorWhitelist(address.clone()));
 }
 
+pub fn get_level_thresholds(env: &Env) -> Vec<u64> {
+env.storage()
+    .instance()
+    .get(&DataKey::LevelThresholds)
+    .unwrap_or_else(|| {
+        // Default thresholds: 300, 600, 1000, 1500 (levels 2..5)
+        let mut v = Vec::new(env);
+        v.push_back(300u64);
+        v.push_back(600u64);
+        v.push_back(1000u64);
+        v.push_back(1500u64);
+        v
+    })
+}
+
+pub fn set_level_thresholds(env: &Env, thresholds: &Vec<u64>) {
+env.storage().instance().set(&DataKey::LevelThresholds, thresholds);
+}
+
 #[cfg(test)]
 mod layout_tests {
     use super::*;
@@ -1399,11 +1425,12 @@ mod layout_tests {
         "TokenDecimals",
         "BadgeType",
         "BadgeTypeIds",
+        "LevelThresholds",
         "MinCreatorLevel",
         "CreatorWhitelist",
     ];
 
-    const EXPECTED_VARIANT_COUNT: usize = 44;
+    const EXPECTED_VARIANT_COUNT: usize = 45;
 
     /// One sample instance per `DataKey` variant for layout audits.
     fn all_data_keys(env: &Env) -> Vec<DataKey> {
@@ -1454,6 +1481,7 @@ mod layout_tests {
         keys.push_back(DataKey::TokenDecimals);
         keys.push_back(DataKey::BadgeType(badge_id.clone()));
         keys.push_back(DataKey::BadgeTypeIds);
+        keys.push_back(DataKey::LevelThresholds);
         keys.push_back(DataKey::MinCreatorLevel);
         keys.push_back(DataKey::CreatorWhitelist(addr.clone()));
         keys
@@ -1497,6 +1525,8 @@ mod layout_tests {
         assert_eq!(all_data_keys(&env).len() as usize, VARIANT_NAMES.len());
         assert_eq!(VARIANT_NAMES.len(), EXPECTED_VARIANT_COUNT);
     }
+}
+
 //================================================================================
 // Clawback Storage (2-of-2 SuperAdmin approval)
 //================================================================================
