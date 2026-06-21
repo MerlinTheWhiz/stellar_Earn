@@ -16,6 +16,7 @@ import { NotificationsService } from '../notifications/notifications.service';
 import { Quest } from '../quests/entities/quest.entity';
 import { User } from '../users/entities/user.entity';
 import { MetricsService } from '../../common/services/metrics.service';
+import { UserRole } from '../auth/enums/user-role.enum';
 
 interface QuestVerifier {
   id: string;
@@ -39,6 +40,8 @@ export class SubmissionsService {
   constructor(
     @InjectRepository(Submission)
     private submissionsRepository: Repository<Submission>,
+    @InjectRepository(User)
+    private usersRepository: Repository<User>,
     private stellarService: StellarService,
     private notificationsService: NotificationsService,
     private eventEmitter: EventEmitter2,
@@ -72,6 +75,40 @@ export class SubmissionsService {
     await this.validateVerifierAuthorization(quest.id, verifierId);
     this.validateStatusTransition(submission.status, 'APPROVED');
 
+    // Validate the submitter has a Stellar address linked BEFORE we mutate
+    // any DB state. Without this gate, a submission whose submitter has not
+    // linked a wallet would be marked APPROVED locally but never settle on
+    // chain, leaving the row stuck without a tx hash and without a recoverable
+    // path forward.
+    if (!user.stellarAddress) {
+      throw new BadRequestException(
+        'Submitter does not have a Stellar address linked',
+      );
+    }
+
+    // Resolve the verifier to a Stellar public key BEFORE the DB CAS update.
+    // The chain expects a Stellar Address (`G…`) for the verifier argument,
+    // NOT a backend user UUID, and `new Address('uuid')` in the SDK throws on
+    // construction. Performing this lookup pre-CAS ensures a missing verifier
+    // record or an unlinked verifier stellarAddress surfaces as the right
+    // exception type without leaving the submission row in a phantom
+    // APPROVED state (which the post-CAS chain-failure rollback path cannot
+    // reach for these failure modes).
+    const verifier = await this.usersRepository.findOne({
+      where: { id: verifierId },
+      relations: [],
+    });
+    if (!verifier) {
+      throw new ForbiddenException(
+        `Verifier with id ${verifierId} not found`,
+      );
+    }
+    if (!verifier.stellarAddress) {
+      throw new BadRequestException(
+        'Verifier does not have a Stellar address linked; cannot sign on their behalf',
+      );
+    }
+
     const approvedAt = new Date();
 
     // Calculate review duration for SLA tracking
@@ -97,12 +134,6 @@ export class SubmissionsService {
       );
     }
 
-    if (!user.stellarAddress) {
-      throw new BadRequestException(
-        'User does not have a Stellar address linked',
-      );
-    }
-
     // Capture the row's pre-approval status so we can roll back reliably if
     // the on-chain call fails. Anything in `approveDto` that we already
     // persisted (notes, etc.) is intentionally left in place — notes are
@@ -115,7 +146,7 @@ export class SubmissionsService {
       const onChainResult = await this.stellarService.approveSubmission(
         quest.contractTaskId,
         user.stellarAddress,
-        verifierId,
+        verifier.stellarAddress,
       );
       onChainTxHash = onChainResult.transactionHash;
     } catch (error) {
