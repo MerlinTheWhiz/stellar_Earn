@@ -10,7 +10,6 @@ on:
       - '.github/workflows/synthetic-monitoring.yml'
       - 'FrontEnd/my-app/**'
   pull_request:
-    branches: [main, master]
     paths:
       - 'scripts/synthetic-monitor.ts'
       - 'scripts/synthetic-monitor.test.ts'

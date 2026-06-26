@@ -1,8 +1,19 @@
 name: Frontend Changelog
 
 on:
-  pull_request:
+  push:
     branches: [main, master]
+    paths:
+      - 'FrontEnd/my-app/lib/types/**'
+      - 'FrontEnd/my-app/lib/api/**'
+      - 'FrontEnd/my-app/lib/schemas/**'
+      - 'FrontEnd/my-app/lib/validation/**'
+      - 'FrontEnd/my-app/context/walletTypes.ts'
+      - 'FrontEnd/my-app/CHANGELOG.md'
+      - 'FrontEnd/my-app/.changeset/**'
+      - 'FrontEnd/my-app/scripts/check-changelog.mjs'
+      - '.github/workflows/frontend-changelog.yml'
+  pull_request:
     paths:
       - 'FrontEnd/my-app/lib/types/**'
       - 'FrontEnd/my-app/lib/api/**'

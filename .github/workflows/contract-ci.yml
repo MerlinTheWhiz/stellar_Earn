@@ -7,7 +7,6 @@ on:
       - "contracts/**"
       - "Contract_archived/**"
   pull_request:
-    branches: [main, master]
     paths:
       - "contracts/**"
       - "Contract_archived/**"
