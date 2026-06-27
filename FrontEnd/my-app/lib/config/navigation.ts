@@ -22,7 +22,12 @@ export interface UserMenuItem {
 }
 
 export const navigationItems: NavigationItem[] = [
-  { href: '/dashboard', labelKey: 'nav.dashboard', exact: true, icon: LayoutDashboard },
+  {
+    href: '/dashboard',
+    labelKey: 'nav.dashboard',
+    exact: true,
+    icon: LayoutDashboard,
+  },
   { href: '/quests', labelKey: 'nav.quests', icon: Target },
   { href: '/submissions', labelKey: 'nav.submissions', icon: FileText },
   { href: '/rewards', labelKey: 'nav.rewards', icon: Gift },

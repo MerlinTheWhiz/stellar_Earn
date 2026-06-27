@@ -89,7 +89,10 @@ export function MobileMenu({ isOpen, onClose, pathname }: MobileMenuProps) {
                 onClick={onClose}
               >
                 {item.icon && (
-                  <item.icon className="mr-3 h-4 w-4 shrink-0" aria-hidden="true" />
+                  <item.icon
+                    className="mr-3 h-4 w-4 shrink-0"
+                    aria-hidden="true"
+                  />
                 )}
                 {item.label}
               </Link>
